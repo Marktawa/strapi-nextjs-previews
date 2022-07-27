@@ -11,12 +11,12 @@ const ArticlesView = (props) => {
         <Row>
           <Col lg="7" className="mx-lg-auto">
             <h1 className="mb-5 border-bottom">Articles</h1>
-            {articles.map((article) => {
+            {articles.data.map((article) => {
               return (
                 <div key={article.id} className="mb-4">
-                  <h2 className="h5">{article.title}</h2>
-                  <p className="mb-2">{article.description}</p>
-                  <Link href={'/articles/' + article.slug}>
+                  <h2 className="h5">{article.attributes.title}</h2>
+                  <p className="mb-2">{article.attributes.description}</p>
+                  <Link href={'/articles/' + article.attributes.slug}>
                     <a className="">Read More</a>
                   </Link>
                 </div>
