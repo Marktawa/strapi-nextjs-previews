@@ -9,7 +9,7 @@ async function fetchArticlesApi() {
 
 // Helper function to GET a single article from Strapi
 async function fetchArticleApi(slug) {
-  const requestUrl = `${STRAPI_URL}/articles/${slug}`;
+  const requestUrl = `${STRAPI_URL}/articles/?filters[slug][$eq]=${slug}`;
   const response = await fetch(requestUrl);
   return await response.json();
 }
