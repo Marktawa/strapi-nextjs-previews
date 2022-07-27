@@ -1,15 +1,25 @@
-
+import Router from 'next/router';
 import MarkdownView from 'react-showdown';
 import { Container, Row, Col } from 'react-bootstrap';
-import { fetchArticlesApi, fetchArticleApi } from '/lib/articles';
+import { fetchArticlesApi, fetchArticleApi, fetchArticlePreviewApi } from '/lib/articles';
 
 const ArticleView = (props) => {
-  const { article } = props;
+  const { article, previewMode } = props;
   return (
     <section className="py-5">
       <Container>
         <Row>
           <Col lg="7" className="mx-lg-auto">
+          {previewMode ? (
+              <div className="small text-muted border-bottom mb-3">
+                <span>You are currently viewing in Preview Mode. </span>
+                <a role="button" className="text-primary" onClick={() => exitPreviewMode()}>
+                  Turn Off Preview Mode
+                </a>
+              </div>
+            ) : (
+              ''
+            )}
             <h1>{article.data[0].attributes.title}</h1>
             <MarkdownView markdown={article.data[0].attributes.content} />
           </Col>
@@ -18,6 +28,14 @@ const ArticleView = (props) => {
     </section>
   );
 };
+// 6
+
+async function exitPreviewMode() {
+    const response = await fetch('/api/exit-preview');
+    if (response) {
+      Router.reload(window.location.pathname);
+    }
+  }
 
 // 1
 export async function getStaticPaths() {
@@ -30,20 +48,25 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  // 2
   const slug = context.params.slug;
   if (!slug) {
     throw new Error('Slug not valid');
   }
   
-  // 3
-  const article = await fetchArticleApi(slug);
+  const previewMode = context.preview ? true : null;
+
+  let article;
+  if (previewMode) {
+    article = await fetchArticlePreviewApi(slug);
+  } else {
+    article = await fetchArticleApi(slug);
+  }
+
   if (!article) {
     return { notFound: true };
   }
 
-  // 4
-  return { props: { article } };
+  return { props: { article, previewMode } };
 }
 
 export default ArticleView;
