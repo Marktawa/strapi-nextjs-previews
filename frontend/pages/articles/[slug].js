@@ -10,8 +10,8 @@ const ArticleView = (props) => {
       <Container>
         <Row>
           <Col lg="7" className="mx-lg-auto">
-            <h1>{article.title}</h1>
-            <MarkdownView markdown={article.content} />
+            <h1>{article.data[0].attributes.title}</h1>
+            <MarkdownView markdown={article.data[0].attributes.content} />
           </Col>
         </Row>
       </Container>
@@ -22,7 +22,7 @@ const ArticleView = (props) => {
 // 1
 export async function getStaticPaths() {
   const articles = await fetchArticlesApi();
-  const paths = articles.map((article) => ({ params: { slug: article.slug } }));
+  const paths = articles.data.map((article) => ({ params: { slug: article.attributes.slug } }));
   return {
     paths: paths,
     fallback: false,
